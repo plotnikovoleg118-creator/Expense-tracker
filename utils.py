@@ -1,11 +1,9 @@
-"""
-validation functions
-"""
+"""Functions for validating and converting user input."""
 
 from datetime import datetime
-#asks date to display it to consumer and adds it to database
-def get_date(prompt):
 
+
+def get_date(prompt: str) -> str:
     while True:
         date_input = input(prompt)
 
@@ -15,19 +13,16 @@ def get_date(prompt):
         except ValueError:
             print('Correct format: dd.mm.YYYY')
 
-#this function makes sure that we input
-#integer
-def get_integer(prompt):
 
+def get_integer(prompt: str) -> int:
     while True:
         try:
             return int(input(prompt))
         except ValueError:
             print('Enter the number!')
 
-#makes sure that input is a float
-def get_float(prompt):
 
+def get_float(prompt: str) -> float:
     while True:
         try:
             return float(input(prompt))

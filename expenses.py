@@ -1,26 +1,21 @@
-'''
-CRUD and validation
-'''
+"""CRUD and validation."""
 
-from utils import(
+from utils import (
     get_date,
     get_float,
     get_integer
 )
-from categories import(
-    get_category
-)
+from categories import get_category
 from database import cursor, conn
 
-#adds expense to the database
-def add_expense():
 
-    description = input('Description:').strip().capitalize()
-    category = get_category()
+def add_expense() -> None:
+    description = input('Description: ').strip().capitalize()
+    category_id = get_category()
 
     while True:
         try:
-            amount = get_float('Price:')
+            amount = get_float('Price: ')
             if amount <= 0:
                 print('Invalid input. Try again!')
             else:
@@ -28,21 +23,33 @@ def add_expense():
         except ValueError:
             print('Invalid input. Try again!')
 
-    date = get_date('Date:')
+    date = get_date('Date: ')
 
     cursor.execute(
-        """INSERT INTO expenses (description, category, amount, date)
-        VALUES (?, ?, ?, ?)""",
-        (description, category, amount, date)
+        """
+        INSERT INTO expenses (description, category_id, amount, date)
+        VALUES (?, ?, ?, ?)
+        """,
+        (description, category_id, amount, date)
     )
     conn.commit()
     print('Expense saved!')
 
-#displays all expenses stored in database
-#displays row number different from ID
-def view_expenses():
 
-    cursor.execute('SELECT * FROM expenses ORDER BY date DESC')
+def view_expenses() -> None:
+    cursor.execute(
+        """
+        SELECT expenses.id,
+            expenses.description,
+            categories.name,
+            expenses.amount,
+            expenses.date
+        FROM expenses
+        JOIN categories
+            ON expenses.category_id = categories.id
+        ORDER BY expenses.date DESC
+        """
+    )
     expenses = cursor.fetchall()
     if not expenses:
         print('\nNo expense found')
@@ -58,9 +65,9 @@ def view_expenses():
                 f'Date: {expense[4]} |'
             )
 
-def update_expense():
 
-    row_number = get_integer('Enter row number:')
+def update_expense() -> None:
+    row_number = get_integer('Enter row number: ')
     cursor.execute('SELECT * FROM expenses ORDER BY date DESC')
     expenses = cursor.fetchall()
 
@@ -70,14 +77,16 @@ def update_expense():
     expense_id = expenses[row_number - 1][0]
 
     new_description = input('Description: ').strip().capitalize()
-    new_category = get_category()
-    new_amount = get_float('Price:')
-    new_date = get_date('Date:')
+    new_category_id = get_category()
+    new_amount = get_float('Price: ')
+    new_date = get_date('Date: ')
     cursor.execute(
-        """UPDATE expenses
-        SET description = ?, category = ?, amount = ?, date = ?
-        WHERE id = ?""",
-        (new_description, new_category, new_amount, new_date, expense_id)
+        """
+        UPDATE expenses
+        SET description = ?, category_id = ?, amount = ?, date = ?
+        WHERE id = ?
+        """,
+        (new_description, new_category_id, new_amount, new_date, expense_id)
     )
     conn.commit()
 
@@ -86,9 +95,9 @@ def update_expense():
     else:
         print('Row was not found.')
 
-def delete_expense():
 
-    row_number = get_integer('Enter row number:')
+def delete_expense() -> None:
+    row_number = get_integer('Enter row number: ')
     cursor.execute('SELECT * FROM expenses ORDER BY date DESC')
     expenses = cursor.fetchall()
 
@@ -97,8 +106,10 @@ def delete_expense():
         return
     expense_id = expenses[row_number - 1][0]
     cursor.execute(
-        """DELETE FROM expenses
-        WHERE id = ?""",
+        """
+        DELETE FROM expenses
+        WHERE id = ?
+        """,
         (expense_id,)
     )
 

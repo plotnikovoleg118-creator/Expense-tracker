@@ -9,15 +9,6 @@ BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / 'expenses.db'
 conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
-cursor.execute('''
-               CREATE TABLE IF NOT EXISTS expenses (
-                   id INTEGER PRIMARY KEY AUTOINCREMENT,
-                   description TEXT NOT NULL,
-                   category TEXT NOT NULL,
-                   amount REAL NOT NULL,
-                   date TEXT NOT NULL
-               )
-               ''')
 
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS categories(
@@ -30,7 +21,8 @@ default_categories = [
     'Food',
     'Transportation',
     'Entertainment',
-    'Living expenses'
+    'Living expenses',
+    'Other'
 ]
 
 for category in default_categories:
@@ -38,6 +30,16 @@ for category in default_categories:
         'INSERT OR IGNORE INTO categories (name) VALUES (?)',
         (category,)
     )
+
+cursor.execute('''
+               CREATE TABLE IF NOT EXISTS expenses (
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   description TEXT NOT NULL,
+                   category_id INTEGER NOT NULL REFERENCES categories(id),
+                   amount REAL NOT NULL,
+                   date TEXT NOT NULL
+               )
+               ''')
 
 #cursor.execute('DELETE FROM categories WHERE name = ?', ('Tervis',))
 conn.commit()
