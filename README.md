@@ -12,6 +12,7 @@ A simple command-line expense tracking application built with Python and SQLite.
 * Validate user input
 * Store expense dates
 * Generate expense summaries by category
+* Generate expense summaries by month
 
 ## Technologies
 
@@ -46,6 +47,6 @@ The SQLite database is created automatically when the application starts.
 
 ## Current Version
 
-**v0.2**
+**v0.3**
 
-This project is currently under development. More analytical features will be added in future versions.
+This project is currently under development. The current version includes normalized category data, SQL JOIN queries, and basic expense analysis by category and month.
