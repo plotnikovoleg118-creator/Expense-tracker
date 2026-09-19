@@ -8,7 +8,7 @@ from expenses import (
     delete_expense,
     get_integer
 )
-from reports import category_summary, monthly_summary
+from reports import reports
 
 
 def menu() -> None:
@@ -17,9 +17,8 @@ def menu() -> None:
     print('2. View expenses')
     print('3. Update expense')
     print('4. Delete expense')
-    print('5. Category summary')
-    print('6. Monthly summary')
-    print('7. Exit')
+    print('5. Reports')
+    print('6. Exit')
 
 
 while True:
@@ -40,12 +39,9 @@ while True:
         delete_expense()
 
     elif choice == 5:
-        category_summary()
+        reports()
 
     elif choice == 6:
-        monthly_summary()
-
-    elif choice == 7:
         conn.close()
         print('Goodbye!')
         break
