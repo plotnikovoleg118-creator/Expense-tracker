@@ -1,4 +1,4 @@
-"""CRUD and validation."""
+"""Functions for managing expenses."""
 
 from utils import (
     get_date,
@@ -12,17 +12,7 @@ from database import cursor, conn
 def add_expense() -> None:
     description = input('Description: ').strip().capitalize()
     category_id = get_category()
-
-    while True:
-        try:
-            amount = get_float('Price: ')
-            if amount <= 0:
-                print('Invalid input. Try again!')
-            else:
-                break
-        except ValueError:
-            print('Invalid input. Try again!')
-
+    amount = get_float('Price: ')
     date = get_date('Date: ')
 
     cursor.execute(
@@ -66,16 +56,19 @@ def view_expenses() -> None:
             )
 
 
+def select_expense() -> int:
+    while True:
+        row_number = get_integer('Enter row number: ')
+        cursor.execute('SELECT id FROM expenses ORDER BY date DESC')
+        expenses = cursor.fetchall()
+    
+        if 1 <= row_number <= len(expenses):
+            return expenses[row_number - 1][0]
+        print('The row was not found.')
+
+
 def update_expense() -> None:
-    row_number = get_integer('Enter row number: ')
-    cursor.execute('SELECT * FROM expenses ORDER BY date DESC')
-    expenses = cursor.fetchall()
-
-    if row_number < 1 or row_number > len(expenses):
-        print('No row found')
-        return
-    expense_id = expenses[row_number - 1][0]
-
+    expense_id = select_expense()
     new_description = input('Description: ').strip().capitalize()
     new_category_id = get_category()
     new_amount = get_float('Price: ')
@@ -97,14 +90,7 @@ def update_expense() -> None:
 
 
 def delete_expense() -> None:
-    row_number = get_integer('Enter row number: ')
-    cursor.execute('SELECT * FROM expenses ORDER BY date DESC')
-    expenses = cursor.fetchall()
-
-    if row_number < 1 or row_number > len(expenses):
-        print('Row was not found.')
-        return
-    expense_id = expenses[row_number - 1][0]
+    expense_id = select_expense()
     cursor.execute(
         """
         DELETE FROM expenses

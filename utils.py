@@ -25,6 +25,9 @@ def get_integer(prompt: str) -> int:
 def get_float(prompt: str) -> float:
     while True:
         try:
-            return float(input(prompt))
+            value = float(input(prompt))
+            if value > 0:
+                return value
+            print('Enter a positive number!')
         except ValueError:
             print('Enter the number!')

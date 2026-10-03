@@ -16,8 +16,9 @@ def category_summary() -> None:
         """
     )
     summary = cursor.fetchall()
-
-    #summarize total
+    if not summary:
+        print(f'\nNo Expense found.')
+        return
     cursor.execute(
         """
         SELECT SUM(amount)
@@ -30,13 +31,35 @@ def category_summary() -> None:
     print(f'\nTotal expense: {total:.2f} €')
     print('\nBy category:\n')
 
-    if not summary:
-        print('\nNo expense found')
-        return
-
     for category, amount in summary:
         percentage = amount / total * 100
         print(f'{category}: {amount:.2f} € ({percentage:.1f}%)')
+
+
+def largest_expense() -> None:
+    cursor.execute(
+        """
+        SELECT expenses.description,
+        categories.name,
+        expenses.amount,
+        expenses.date
+        FROM expenses
+        JOIN categories
+            on expenses.category_id = categories.id
+        ORDER BY expenses.amount DESC
+        LIMIT 1
+        """
+    )
+    biggest_expense = cursor.fetchone()
+    if not biggest_expense:
+        print('\nNo expense found')
+        return
+    print(f'\n==== Largest expense ====')
+    print(f'Description: {biggest_expense[0]}')
+    print(f'Category: {biggest_expense[1]}')
+    print(f'Amount: {biggest_expense[2]:.2f} €')
+    print(f'Date: {biggest_expense[3]}')
+
 
 def monthly_summary() -> None:
     cursor.execute(
@@ -58,7 +81,8 @@ def monthly_summary() -> None:
         return
 
     for month, amount in summary:
-        print(f'{month}: {amount: .2f} €')
+        print(f'{month}: {amount:.2f} €')
+
 
 def average_monthly_expense() -> None:
     cursor.execute(
@@ -76,13 +100,15 @@ def average_monthly_expense() -> None:
     average = cursor.fetchone()[0]
     print(f'AVerage monthly expense: {average:.2f} €')
 
+
 def reports() -> None:
     while True:
         print('\n==== Reports ====')
         print('1. Expenses by category')
         print('2. Expenses by month')
         print('3. Average monthly expense')
-        print('4. Back')
+        print('4. Largest expense')
+        print('5. Back')
 
         choice = get_integer('Choose action:')
         if choice == 1:
@@ -95,6 +121,10 @@ def reports() -> None:
             average_monthly_expense()
 
         elif choice == 4:
+            largest_expense()
+
+        elif choice == 5:
             break
+
         else:
             print('Invalid choice. Try again.')

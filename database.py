@@ -1,6 +1,4 @@
-'''
-SQL code and stuff related to database
-'''
+"""Database setup and connections."""
 
 import sqlite3
 from pathlib import Path

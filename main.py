@@ -5,10 +5,10 @@ from expenses import (
     add_expense,
     view_expenses,
     update_expense,
-    delete_expense,
-    get_integer
+    delete_expense
 )
 from reports import reports
+from utils import get_integer
 
 
 def menu() -> None:
@@ -21,30 +21,33 @@ def menu() -> None:
     print('6. Exit')
 
 
-while True:
-    menu()
+def main() -> None:
+    while True:
+        menu()
 
-    choice = get_integer('Choose action: ')
+        choice = get_integer('Choose action: ')
 
-    if choice == 1:
-        add_expense()
+        if choice == 1:
+            add_expense()
 
-    elif choice == 2:
-        view_expenses()
+        elif choice == 2:
+            view_expenses()
 
-    elif choice == 3:
-        update_expense()
+        elif choice == 3:
+            update_expense()
 
-    elif choice == 4:
-        delete_expense()
+        elif choice == 4:
+            delete_expense()
 
-    elif choice == 5:
-        reports()
+        elif choice == 5:
+            reports()
 
-    elif choice == 6:
-        conn.close()
-        print('Goodbye!')
-        break
+        elif choice == 6:
+            conn.close()
+            print('Goodbye!')
+            break
 
-    else:
-        print('Invalid choice. Try again!')
+        else:
+            print('Invalid choice. Try again!')
+if __name__ == '__main__':
+    main()
